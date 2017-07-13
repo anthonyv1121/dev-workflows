@@ -42,7 +42,7 @@ gulp.task('compass', function() {
 gulp.task('all', ['coffee', 'js', 'compass']);
 
 // Default task when you run gulp in the Terminal
-gulp.task('default', ['coffee', 'js', 'compass']);
+gulp.task('default', ['coffee', 'js', 'compass', 'watch']);
 
 //Watch task
 gulp.task('watch', function() {
