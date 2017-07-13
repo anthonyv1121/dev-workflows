@@ -38,3 +38,8 @@ gulp.task('compass', function() {
     .on('error', gutil.log))
     .pipe(gulp.dest('builds/development/css')) // destination of file
 });
+// Task to run numerous tasks
+gulp.task('all', ['coffee', 'js', 'compass']);
+
+// Default task when you run gulp in the Terminal
+gulp.task('default', ['coffee', 'js', 'compass']);
