@@ -2,6 +2,7 @@ var gulp = require('gulp'),// bring in the gulp library
     gutil = require('gulp-util'),
     coffee = require('gulp-coffee'),
     browserify = require('gulp-browserify'),
+    compass = require('gulp-compass'),
     concat = require('gulp-concat');
 
 var coffeeSources = ['components/coffee/tagline.coffee'];
@@ -11,6 +12,7 @@ var jsSources = [ // array of all JS documents - oder of processing is based on 
   'components/scripts/tagline.js',
   'components/scripts/template.js'
 ];
+var sassSources = ['components/sass/style.scss'];
 
 gulp.task('coffee', function() {
   gulp.src(coffeeSources)
@@ -24,4 +26,15 @@ gulp.task('js', function() {
     .pipe(concat('script.js')) // the name of the file we want to build
     .pipe(browserify())
     .pipe(gulp.dest('builds/development/js')) // destination of file
+});
+
+gulp.task('compass', function() {
+  gulp.src(sassSources)
+    .pipe(compass({
+      sass: 'components/sass',
+      image: 'builds/development/images',
+      style: "expanded"
+    })
+    .on('error', gutil.log))
+    .pipe(gulp.dest('builds/development/css')) // destination of file
 });
