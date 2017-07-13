@@ -1,6 +1,7 @@
 var gulp = require('gulp'),// bring in the gulp library
     gutil = require('gulp-util'),
     coffee = require('gulp-coffee'),
+    browserify = require('gulp-browserify'),
     concat = require('gulp-concat');
 
 var coffeeSources = ['components/coffee/tagline.coffee'];
@@ -21,5 +22,6 @@ gulp.task('coffee', function() {
 gulp.task('js', function() {
   gulp.src(jsSources)
     .pipe(concat('script.js')) // the name of the file we want to build
+    .pipe(browserify())
     .pipe(gulp.dest('builds/development/js')) // destination of file
 });
