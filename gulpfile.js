@@ -43,3 +43,10 @@ gulp.task('all', ['coffee', 'js', 'compass']);
 
 // Default task when you run gulp in the Terminal
 gulp.task('default', ['coffee', 'js', 'compass']);
+
+//Watch task
+gulp.task('watch', function() {
+  gulp.watch(coffeeSources, ['coffee']);
+  gulp.watch(jsSources, ['js']);
+  gulp.watch('components/sass/*.scss', ['compass']);
+});
