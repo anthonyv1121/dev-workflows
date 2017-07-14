@@ -4,6 +4,8 @@ var gulp = require('gulp'),// bring in the gulp library
     browserify = require('gulp-browserify'),
     compass = require('gulp-compass'),
     concat = require('gulp-concat'),
+    gulpif = require('gulp-if'),
+    uglify = require('gulp-uglify'),
     connect = require('gulp-connect');
 
     var env,
@@ -47,6 +49,7 @@ gulp.task('js', function() {
   gulp.src(jsSources)
     .pipe(concat('script.js')) // the name of the file we want to build
     .pipe(browserify())
+    .pipe(gulpif(env === 'production', uglify() )) // if conditional to uglify JS
     .pipe(gulp.dest(outputDir + 'js')) // destination of file
     .pipe(connect.reload()) // reload when chnages are made
 });
