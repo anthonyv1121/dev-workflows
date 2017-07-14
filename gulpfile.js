@@ -3,7 +3,8 @@ var gulp = require('gulp'),// bring in the gulp library
     coffee = require('gulp-coffee'),
     browserify = require('gulp-browserify'),
     compass = require('gulp-compass'),
-    concat = require('gulp-concat');
+    concat = require('gulp-concat'),
+    connect = require('gulp-connect');
 
 var coffeeSources = ['components/coffee/tagline.coffee'];
 var jsSources = [ // array of all JS documents - oder of processing is based on order in array
@@ -26,6 +27,7 @@ gulp.task('js', function() {
     .pipe(concat('script.js')) // the name of the file we want to build
     .pipe(browserify())
     .pipe(gulp.dest('builds/development/js')) // destination of file
+    .pipe(connect.reload()) // reload when chnages are made
 });
 
 gulp.task('compass', function() {
@@ -37,16 +39,25 @@ gulp.task('compass', function() {
     })
     .on('error', gutil.log))
     .pipe(gulp.dest('builds/development/css')) // destination of file
+    .pipe(connect.reload()) //reload when chnages are made
 });
 // Task to run numerous tasks
 gulp.task('all', ['coffee', 'js', 'compass']);
 
 // Default task when you run gulp in the Terminal
-gulp.task('default', ['coffee', 'js', 'compass', 'watch']);
+gulp.task('default', ['coffee', 'js', 'compass', 'connect', 'watch']);
 
 //Watch task
 gulp.task('watch', function() {
   gulp.watch(coffeeSources, ['coffee']);
   gulp.watch(jsSources, ['js']);
   gulp.watch('components/sass/*.scss', ['compass']);
+});
+
+//gulp-connect allows creation of a local server
+gulp.task('connect', function() {
+  connect.server({
+    root: 'builds/development/', // root of application
+    livereload: true
+  })
 });
