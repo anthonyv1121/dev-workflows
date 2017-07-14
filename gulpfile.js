@@ -14,6 +14,8 @@ var jsSources = [ // array of all JS documents - oder of processing is based on 
   'components/scripts/template.js'
 ];
 var sassSources = ['components/sass/style.scss'];
+var htmlSources = ['builds/development/*.html']; // all html files
+var jsonSources = ['builds/development/js/*.json'];
 
 gulp.task('coffee', function() {
   gulp.src(coffeeSources)
@@ -41,17 +43,26 @@ gulp.task('compass', function() {
     .pipe(gulp.dest('builds/development/css')) // destination of file
     .pipe(connect.reload()) //reload when chnages are made
 });
-// Task to run numerous tasks
-gulp.task('all', ['coffee', 'js', 'compass']);
-
-// Default task when you run gulp in the Terminal
-gulp.task('default', ['coffee', 'js', 'compass', 'connect', 'watch']);
+// Sample Task to run numerous tasks
+//gulp.task('all', ['coffee', 'js', 'compass']);
 
 //Watch task
 gulp.task('watch', function() {
   gulp.watch(coffeeSources, ['coffee']);
   gulp.watch(jsSources, ['js']);
   gulp.watch('components/sass/*.scss', ['compass']);
+  gulp.watch(htmlSources, ['html']);
+  gulp.watch(jsonSources, ['json']);
+});
+
+gulp.task('html', function() {
+  gulp.src(htmlSources)
+    .pipe(connect.reload())
+});
+
+gulp.task('json', function() {
+  gulp.src(jsonSources)
+    .pipe(connect.reload())
 });
 
 //gulp-connect allows creation of a local server
@@ -61,3 +72,6 @@ gulp.task('connect', function() {
     livereload: true
   })
 });
+
+// Default task when you run gulp in the Terminal
+gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'connect', 'watch']);
