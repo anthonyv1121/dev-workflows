@@ -7,6 +7,7 @@ var gulp = require('gulp'),// bring in the gulp library
     gulpif = require('gulp-if'),
     uglify = require('gulp-uglify'),
     minifyHTML = require('gulp-minify-html'),
+    jsonminify = require('gulp-jsonminify'),
     connect = require('gulp-connect');
 
     var env,
@@ -75,7 +76,7 @@ gulp.task('watch', function() {
   gulp.watch(jsSources, ['js']);
   gulp.watch('components/sass/*.scss', ['compass']);
   gulp.watch('builds/development/*.html', ['html']); // this needs to be hardcoded because when we're in production, there is no index.html file.
-  gulp.watch(jsonSources, ['json']);
+  gulp.watch('builds/development/js/*.json', ['json']);
 });
 
 gulp.task('html', function() {
@@ -86,7 +87,9 @@ gulp.task('html', function() {
 });
 
 gulp.task('json', function() {
-  gulp.src(jsonSources)
+  gulp.src('builds/development/js/*.json')
+    .pipe(gulpif(env === 'production', jsonminify() )) // if conditional to minify json in production
+    .pipe(gulpif(env === 'production', gulp.dest('builds/production/js') )) // send output to prod directory
     .pipe(connect.reload())
 });
 
