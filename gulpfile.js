@@ -6,6 +6,7 @@ var gulp = require('gulp'),// bring in the gulp library
     concat = require('gulp-concat'),
     gulpif = require('gulp-if'),
     uglify = require('gulp-uglify'),
+    minifyHTML = require('gulp-minify-html'),
     connect = require('gulp-connect');
 
     var env,
@@ -49,7 +50,7 @@ gulp.task('js', function() {
   gulp.src(jsSources)
     .pipe(concat('script.js')) // the name of the file we want to build
     .pipe(browserify())
-    .pipe(gulpif(env === 'production', uglify() )) // if conditional to uglify JS
+    .pipe(gulpif(env === 'production', uglify() )) // if conditional to uglify JS in production
     .pipe(gulp.dest(outputDir + 'js')) // destination of file
     .pipe(connect.reload()) // reload when chnages are made
 });
@@ -73,12 +74,14 @@ gulp.task('watch', function() {
   gulp.watch(coffeeSources, ['coffee']);
   gulp.watch(jsSources, ['js']);
   gulp.watch('components/sass/*.scss', ['compass']);
-  gulp.watch(htmlSources, ['html']);
+  gulp.watch('builds/development/*.html', ['html']); // this needs to be hardcoded because when we're in production, there is no index.html file.
   gulp.watch(jsonSources, ['json']);
 });
 
 gulp.task('html', function() {
-  gulp.src(htmlSources)
+  gulp.src('builds/development/*.html')
+    .pipe(gulpif(env === 'production', minifyHTML() )) // if conditional to minify html in production
+    .pipe(gulpif(env === 'production', gulp.dest(outputDir) )) // send output to prod directory
     .pipe(connect.reload())
 });
 
