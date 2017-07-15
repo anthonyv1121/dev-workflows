@@ -1,4 +1,4 @@
-var gulp = require('gulp'),// bring in the gulp library
+var gulp = require('gulp'),
     gutil = require('gulp-util'),
     coffee = require('gulp-coffee'),
     browserify = require('gulp-browserify'),
@@ -30,30 +30,30 @@ console.log(env);
         }
 
 coffeeSources = ['components/coffee/tagline.coffee'];
-jsSources = [ // array of all JS documents - oder of processing is based on order in array
+jsSources = [
   'components/scripts/rclick.js',
   'components/scripts/pixgrid.js',
   'components/scripts/tagline.js',
   'components/scripts/template.js'
 ];
 sassSources = ['components/sass/style.scss'];
-htmlSources = [outputDir + '*.html']; // all html files
-jsonSources = [outputDir + 'js/*.json'];
+htmlSources = ['builds/development/*.html'];
+jsonSources = ['builds/development/js/*.json'];
 
 gulp.task('coffee', function() {
   gulp.src(coffeeSources)
-    .pipe(coffee({ bare: true }) // bare = compiles JavaScript without putting it in a safety wrapper like it normally would
+    .pipe(coffee({ bare: true })
       .on('error', gutil.log))
-    .pipe(gulp.dest('components/scripts')) // once it's finish processing the coffee script, put new file in this location.
+    .pipe(gulp.dest('components/scripts'))
 });
 
 gulp.task('js', function() {
   gulp.src(jsSources)
-    .pipe(concat('script.js')) // the name of the file we want to build
+    .pipe(concat('script.js'))
     .pipe(browserify())
-    .pipe(gulpif(env === 'production', uglify() )) // if conditional to uglify JS in production
-    .pipe(gulp.dest(outputDir + 'js')) // destination of file
-    .pipe(connect.reload()) // reload when chnages are made
+    .pipe(gulpif(env === 'production', uglify() ))
+    .pipe(gulp.dest(outputDir + 'js'))
+    .pipe(connect.reload())
 });
 
 gulp.task('compass', function() {
@@ -64,42 +64,37 @@ gulp.task('compass', function() {
       style: sassStyle
     })
     .on('error', gutil.log))
-    .pipe(gulp.dest(outputDir + 'css')) // destination of file
-    .pipe(connect.reload()) //reload when chnages are made
+    .pipe(gulp.dest(outputDir + 'css'))
+    .pipe(connect.reload())
 });
-// Sample Task to run numerous tasks
-//gulp.task('all', ['coffee', 'js', 'compass']);
 
-//Watch task
 gulp.task('watch', function() {
   gulp.watch(coffeeSources, ['coffee']);
   gulp.watch(jsSources, ['js']);
   gulp.watch('components/sass/*.scss', ['compass']);
-  gulp.watch('builds/development/*.html', ['html']); // this needs to be hardcoded because when we're in production, there is no index.html file.
-  gulp.watch('builds/development/js/*.json', ['json']);
+  gulp.watch(htmlSources, ['html']);
+  gulp.watch(jsonSources, ['json']);
 });
 
 gulp.task('html', function() {
-  gulp.src('builds/development/*.html')
-    .pipe(gulpif(env === 'production', minifyHTML() )) // if conditional to minify html in production
-    .pipe(gulpif(env === 'production', gulp.dest(outputDir) )) // send output to prod directory
+  gulp.src(htmlSources)
+    .pipe(gulpif(env === 'production', minifyHTML() ))
+    .pipe(gulpif(env === 'production', gulp.dest(outputDir) ))
     .pipe(connect.reload())
 });
 
 gulp.task('json', function() {
-  gulp.src('builds/development/js/*.json')
-    .pipe(gulpif(env === 'production', jsonminify() )) // if conditional to minify json in production
-    .pipe(gulpif(env === 'production', gulp.dest('builds/production/js') )) // send output to prod directory
+  gulp.src(jsonSources)
+    .pipe(gulpif(env === 'production', jsonminify() ))
+    .pipe(gulpif(env === 'production', gulp.dest('builds/production/js') ))
     .pipe(connect.reload())
 });
 
-//gulp-connect allows creation of a local server
 gulp.task('connect', function() {
   connect.server({
-    root: outputDir, // root of application
+    root: outputDir,
     livereload: true
   })
 });
 
-// Default task when you run gulp in the Terminal
 gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'connect', 'watch']);
